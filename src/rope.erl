@@ -13,28 +13,20 @@
         ,to_iolist/1
         ]).
 
--record(tree, {weight :: integer()
-              ,lhs :: tree()
-              ,rhs :: tree()
-              }).
--opaque tree() :: #tree{}.
+-ifdef(TEST).
+-export([from_tree/2
+        ,tree_len/1
+        ,balance_again/2
+        ,tree_to_iolist/1
+        ,depth/1
+        ]).
+-endif.
 
--type thresh() :: pos_integer().
--record(rope, {len :: non_neg_integer()
-              ,thresh = 1 :: thresh()
-              ,tree :: maybe(tree())
-              }).
+-include("ropes.hrl").
+-opaque tree() :: #tree{}.
 -opaque t() :: #rope{}.
 
-%% Note: indices start at zero
--type index() :: non_neg_integer().
-
 -export_type([t/0, tree/0, index/0]).
-
--type maybe(T) :: nil | T.
--type str() :: char() | string() | binary(). %% Not really iodata()
--define(NE_BINARY, <<_:8,_/binary>>).
--define(IS_INDEX(Idx), is_integer(Idx), Idx >= 0).
 
 %% API
 
@@ -82,6 +74,16 @@ from_string(Char)
     #rope{len = 1
          ,tree = [Char]
          }.
+
+-ifdef(TEST).
+-spec from_tree(tree(), thresh()) -> t().
+from_tree(Tree, Thresh)
+  when is_integer(Thresh), Thresh > 0 ->
+    #rope{len = tree_len(Tree)
+         ,thresh = Thresh
+         ,tree = Tree
+         }.
+-endif.
 
 -spec insert_at(t(), index(), str()) -> t().
 insert_at(#rope{len = Len, tree = Tree}=R, Idx, Str=?NE_BINARY)
