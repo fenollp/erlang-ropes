@@ -1,0 +1,42 @@
+version: 2
+workflows:
+  version: 2
+  CI:
+    jobs:
+      - build
+      # - test:
+      #     requires:
+      #       - build
+
+install_rebar3: &install_rebar3
+  |
+    curl -#fSLo /usr/local/bin/rebar3 https://s3.amazonaws.com/rebar3/rebar3
+    chmod +x /usr/local/bin/rebar3
+    rebar3 --version
+
+jobs:
+
+  build:
+    docker:
+      - image: erlang:20.3.2-alpine
+    steps:
+      - run: apk update && apk upgrade
+      - run: apk add curl ca-certificates git make
+      - checkout
+      - run: *install_rebar3
+      - run: rebar3 compile
+      - run: rebar3 xref
+      - run: rebar3 as test xref
+      - run: rebar3 dialyzer
+      - run: rebar3 proper
+      - run: rebar3 cover
+
+  # test:
+  #   docker:
+  #     - image: erlang:20.3.2-alpine
+  #   steps:
+  #     - run: apk update && apk upgrade
+  #     - run: apk add curl ca-certificates git make
+  #     - checkout
+  #     - run: *install_rebar3
+  #     - run: rebar3 proper
