@@ -19,6 +19,7 @@
         ,balance_again/2
         ,tree_to_iolist/1
         ,depth/1
+        ,concatenate/2
         ]).
 -endif.
 

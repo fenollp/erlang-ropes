@@ -157,10 +157,10 @@ str() ->
 tree() ->
     ?LAZY(
        ?LET({LHS,RHS}, frequency(
-                         [{2, str(), str()}
-                         ,{1, str(), tree()}
-                         ,{1, tree(), str()}
-                         ,{1, tree(), tree()}
+                         [{2, {str(), str()}}
+                         ,{1, {str(), tree()}}
+                         ,{1, {tree(), str()}}
+                         ,{1, {tree(), tree()}}
                          ])
            ,#tree{weight = rope:tree_len(LHS)
                  ,lhs = LHS
@@ -177,16 +177,12 @@ ne_tree() ->
       ).
 
 cx_tree() ->
-    ?LET({TreeA,TreeB}, {ne_tree(),ne_tree()}
-        ,rope:concatenate(TreeA, TreeB)
-        ).
+    ?LET({TreeA,TreeB}, {ne_tree(),ne_tree()}, rope:concatenate(TreeA,TreeB)).
 
 unbalanced_tree(Thresh) ->
     ?SUCHTHAT(
        Tree
-      ,?LET({TreeA,TreeB}, {cx_tree(),cx_tree()}
-           ,rope:concatenate(TreeA, TreeB)
-           )
+      ,?LET({TreeA,TreeB}, {cx_tree(),cx_tree()}, rope:concatenate(TreeA,TreeB))
       ,not is_balanced(Tree, Thresh)
       ).
 

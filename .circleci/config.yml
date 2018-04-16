@@ -24,12 +24,10 @@ jobs:
       - run: apk add curl ca-certificates git make
       - checkout
       - run: *install_rebar3
-      - run: rebar3 compile
-      - run: rebar3 xref
-      - run: rebar3 as test xref
-      - run: rebar3 dialyzer
+      - run: make
       - run: rebar3 as test proper
       - run: rebar3 cover
+      - run: rebar3 dialyzer
 
   # test:
   #   docker:
